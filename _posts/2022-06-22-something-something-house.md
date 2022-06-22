@@ -5,7 +5,7 @@ description: on recommendations within property searches
 categories: [recommendations]
 title: a garden please, for the love of god
 hide: false
-image: {{ site.baseurl }}/property_recs/images/not-garden.webp
+image: /images/property_recs/not-garden.webp
 ---
 
 ## Why do you even care?
@@ -29,13 +29,13 @@ The way this works for property searches will be a user gives you a list of spec
 - Area
 - Price
 - # of Bedrooms
-![]({{ site.baseurl }}/property_recs/images/basic-search.png "basic filters when searching in RightMove")
+![]({{ site.baseurl }}/images/property_recs/basic-search.png "basic filters when searching in RightMove")
 
 
 Then the search engine will filter results that match this criteria and expose them to the user. The ordering of results is where the search engine can play around in the recommendation space, often a user will be given the option of how to sort; else it may be popularity or a more fun complex recommender solution.
 
 The user can further refine the results using additional filters.
-![]({{ site.baseurl }}/property_recs/images/must-haves.png "additional filters when searching in RightMove")
+![]({{ site.baseurl }}/images/property_recs/must-haves.png "additional filters when searching in RightMove")
 
 
 Now this is where it becomes much more difficult - most of these filters are binary/categorical - but is this how they actually should work?
@@ -45,7 +45,7 @@ Let's think about `garden`. If I tick for a garden, am I expecting a front garde
 I've already touched on it briefly, but is there an element of soft-filtering that a user can do instead. I may *prefer* to have a garden, but want to see other properties too because it's not a deal-breaker. This is one of the areas which shouldn't change the content of results; but the ordering. I've seen some new (well, to me anyway) aggregators do this quite well.
 
 OnTheMarket has the concept of a 'Wish List' where it won't exclude results from showing; but will flag the ones that match criteria on the wishlist. This is useful, a user doesn't need to re-search to expand their result set, but it still feels refined. 
-![]({{ site.baseurl }}/property_recs/images/otm.png "OnTheMarket search UX")
+![]({{ site.baseurl }}/images/property_recs/otm.png "OnTheMarket search UX")
 
 
 ## Quality of metadata
