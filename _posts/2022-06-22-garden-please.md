@@ -28,7 +28,7 @@ Users looking for property aren't going to do this regularly, and may be looking
 The way this works for property searches will be a user gives you a list of specific filters for an item. The main three being:
 - Area
 - Price
-- # of Bedrooms
+- Number of Bedrooms
 ![]({{ site.baseurl }}/images/property_recs/basic-search.png "basic filters when searching in RightMove")
 
 
