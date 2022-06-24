@@ -3,7 +3,7 @@ toc: true
 layout: post
 description: on recommendations within property searches
 categories: [recommendations]
-title: a garden please, for the love of god
+title: Is this a Garden?
 hide: false
 image: /images/property_recs/not-garden.webp
 ---
