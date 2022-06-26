@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="twitter:card" content="summary_large_image" /><!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>It’s like Dark Souls meets Breath of the Wild | franalytics</title>
+<meta name="generator" content="Jekyll v4.1.1" />
+<meta property="og:title" content="It’s like Dark Souls meets Breath of the Wild" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="Scraping data from metacritic to estimate similarity of different games." />
+<meta property="og:description" content="Scraping data from metacritic to estimate similarity of different games." />
+<link rel="canonical" href="https://ffmmbb.github.io/franalytics/text-extraction/code/2022/06/26/games-and-reviews.html" />
+<meta property="og:url" content="https://ffmmbb.github.io/franalytics/text-extraction/code/2022/06/26/games-and-reviews.html" />
+<meta property="og:site_name" content="franalytics" />
+<meta property="og:image" content="https://ffmmbb.github.io/franalytics/images/chart-preview.png" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2022-06-26T00:00:00-05:00" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="twitter:image" content="https://ffmmbb.github.io/franalytics/images/chart-preview.png" />
+<meta property="twitter:title" content="It’s like Dark Souls meets Breath of the Wild" />
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","dateModified":"2022-06-26T00:00:00-05:00","datePublished":"2022-06-26T00:00:00-05:00","description":"Scraping data from metacritic to estimate similarity of different games.","headline":"It’s like Dark Souls meets Breath of the Wild","image":"https://ffmmbb.github.io/franalytics/images/chart-preview.png","mainEntityOfPage":{"@type":"WebPage","@id":"https://ffmmbb.github.io/franalytics/text-extraction/code/2022/06/26/games-and-reviews.html"},"url":"https://ffmmbb.github.io/franalytics/text-extraction/code/2022/06/26/games-and-reviews.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/franalytics/assets/css/style.css"><link type="application/atom+xml" rel="alternate" href="https://ffmmbb.github.io/franalytics/feed.xml" title="franalytics" /><link rel="shortcut icon" type="image/x-icon" href="/franalytics/images/cindy2.ico"><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Primer/15.2.0/primer.css" integrity="sha512-xTz2ys4coGAOz8vuV1NcQBkgVmKhsSEtjbqyMJbBHRplFuvKIUo6xhLHpAyPt9mfR6twHJgn9OgVLuqOvjeBhg==" crossorigin="anonymous" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.14.0/css/all.min.css" integrity="sha512-1PKOgIY59xJ8Co8+NE6FZ+LOAZKjy+KY8iq0G4B3CyeY6wYHN3yt9PW0XpSriVlkMXe40PTKnXrLnZ9+fkDaog==" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.css" integrity="sha512-h7nl+xz8wgDlNM4NqKEM4F1NkIRS17M9+uJwIGwuo8vGqIl4BhuCKdxjWEINm+xyrUjNCnK5dCrhM0sj+wTIXw==" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/katex.min.js" integrity="sha512-/CMIhXiDA3m2c9kzRyd97MTb3MC6OVnx4TElQ7fkkoRghwDf6gi41gaT1PwF270W6+J60uTmwgeRpNpJdRV6sg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.12.0/contrib/auto-render.min.js" integrity="sha512-Do7uJAaHZm5OLrIv/yN4w0iG1dbu01kzdMNnFfu/mAqgUk6Nniv2JYHcwH+cNwjqgLcqcuBBk+JRvprLVI8azg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha512-0doc9hKxR3PYwso42RD1p5ySZpzzuDiOwMrdCEh2WdJZCjcmFKc/wEnL+z8fBQrnHoiNWbo+3fiGkOYXBdQp4A==" crossorigin="anonymous"></script>
+    <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement( document.body, {
+        delimiters: [
+            {left: "$$", right: "$$", display: true},
+            {left: "[%", right: "%]", display: true},
+            {left: "$", right: "$", display: false}
+        ]}
+        );
+    });
+    </script>
+
+
+<script>
+function wrap_img(fn) {
+    if (document.attachEvent ? document.readyState === "complete" : document.readyState !== "loading") {
+        var elements = document.querySelectorAll(".post img");
+        Array.prototype.forEach.call(elements, function(el, i) {
+            if (el.getAttribute("title") && (el.className != "emoji")) {
+                const caption = document.createElement('figcaption');
+                var node = document.createTextNode(el.getAttribute("title"));
+                caption.appendChild(node);
+                const wrapper = document.createElement('figure');
+                wrapper.className = 'image';
+                el.parentNode.insertBefore(wrapper, el);
+                el.parentNode.removeChild(el);
+                wrapper.appendChild(el);
+                wrapper.appendChild(caption);
+            }
+        });
+    } else { document.addEventListener('DOMContentLoaded', fn); }
+}
+window.onload = wrap_img;
+</script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function(){
+    // add link icon to anchor tags
+    var elem = document.querySelectorAll(".anchor-link")
+    elem.forEach(e => (e.innerHTML = '<i class="fas fa-link fa-xs"></i>'));
+    });
+</script>
+</head>
+<body><header class="site-header">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/franalytics/">franalytics</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/franalytics/about/">About Me</a><a class="page-link" href="/franalytics/search/">Search</a><a class="page-link" href="/franalytics/categories/">Tags</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">It&#39;s like Dark Souls meets Breath of the Wild</h1><p class="page-description">Scraping data from metacritic to estimate similarity of different games.</p><p class="post-meta post-meta-title"><time class="dt-published" datetime="2022-06-26T00:00:00-05:00" itemprop="datePublished">
+        Jun 26, 2022
+      </time>
+       • <span class="read-time" title="Estimated read time">
+    
+    
+      8 min read
+    
+</span></p>
+
+    
+      <p class="category-tags"><i class="fas fa-tags category-tags-icon"></i></i> 
+      
+        <a class="category-tags-link" href="/franalytics/categories/#text-extraction">text-extraction</a>
+        &nbsp;
+      
+        <a class="category-tags-link" href="/franalytics/categories/#code">code</a>
+        
+      
+      </p>
+    
+
+    
+      
+        <div class="pb-5 d-flex flex-justify-center">
+          <div class="px-2">
+
+    <a href="https://github.com/ffmmbb/franalytics/tree/master/_notebooks/2022-06-26-games-and-reviews.ipynb" role="button" target="_blank">
+<img class="notebook-badge-image" src="/franalytics/assets/badges/github.svg" alt="View On GitHub">
+    </a>
+</div>
+
+          
+          <div class="px-2">
+    <a href="https://colab.research.google.com/github/ffmmbb/franalytics/blob/master/_notebooks/2022-06-26-games-and-reviews.ipynb" target="_blank">
+        <img class="notebook-badge-image" src="/franalytics/assets/badges/colab.svg" alt="Open In Colab"/>
+    </a>
+</div>
+          
+        </div>
+      </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <ul id="toc" class="section-nav">
+<li class="toc-entry toc-h2"><a href="#Nerdy-Filler">Nerdy Filler </a></li>
+<li class="toc-entry toc-h2"><a href="#Summarising-the-summaries">Summarising the summaries </a></li>
+<li class="toc-entry toc-h2"><a href="#Scraping-Away">Scraping Away </a></li>
+<li class="toc-entry toc-h2"><a href="#Turning-text-into-something-useful">Turning text into something useful </a></li>
+<li class="toc-entry toc-h2"><a href="#Reducing-dimensionality">Reducing dimensionality </a></li>
+<li class="toc-entry toc-h2"><a href="#But-okay,-what-should-I-actually-buy-next?">But okay, what should I actually buy next? </a></li>
+<li class="toc-entry toc-h2"><a href="#Is-it-even-good?">Is it even good? </a></li>
+</ul><!--
+#################################################
+### THIS FILE WAS AUTOGENERATED! DO NOT EDIT! ###
+#################################################
+# file to edit: _notebooks/2022-06-26-games-and-reviews.ipynb
+-->
+
+<div class="container" id="notebook-container">
+        
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Nerdy-Filler">
+<a class="anchor" href="#Nerdy-Filler" aria-hidden="true"><span class="octicon octicon-link"></span></a>Nerdy Filler<a class="anchor-link" href="#Nerdy-Filler"> </a>
+</h2>
+<p>I love games. I'm not good at them, but I love them nonetheless. I spend a lot of time looking at metacritic, searching for the next game I wanna play. I wouldn't say I have a huge amount of time to trial games - so, whilst it's not life and death, it would be good to go into purchasing a game with some confidence I'll enjoy it.</p>
+<p>Now, it's obvious that building a homemade recommender system for video games will always struggle up against what the Sony/Microsoft/Nintendo can build - these companies will have masses of user data, and should be able to build pretty strong collaborative filter type systems.</p>
+<p>And also, this quick article isn't even going to start on that recommender system (why would I open myself up to judgement on the games I play??). What I want to do in here is talk about how we'd go about creating some useful data, that could then be used in a recommender system.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Summarising-the-summaries">
+<a class="anchor" href="#Summarising-the-summaries" aria-hidden="true"><span class="octicon octicon-link"></span></a>Summarising the summaries<a class="anchor-link" href="#Summarising-the-summaries"> </a>
+</h2>
+<p>One of the best sites for exploring which games to play next, is <a href="www.metacritic.com">metacritic</a>. This collects multiple reviews from critics/users and aggregates these into ratings. They also provide summary information on games and this is where we'll collect and transform into useful features for games.</p>
+<p><img src="/franalytics/images/copied_from_nb/metacritic/elden-ring.png" alt=""></p>
+<p>There's a lot of useful data on that page, but we're going to focus solely on the <code>summary</code> for now and for ease we're going to collect ~50 games that have been released on the PS5 in the last year. Naturally with data like this, more is always better than less - but the process can remain the same.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Scraping-Away">
+<a class="anchor" href="#Scraping-Away" aria-hidden="true"><span class="octicon octicon-link"></span></a>Scraping Away<a class="anchor-link" href="#Scraping-Away"> </a>
+</h2>
+<p>The first thing we need to do is to loop through a list of games, collecting the summary for each of these. I tend to lean towards doing this in a pandas dataframe (though there will be more efficient ways of storing this; I just come from an R background and it's my preference for exploration). 
+There's a good article on scraping reviews from metacritic <a href="https://towardsdatascience.com/web-scraping-metacritic-reviews-using-beautifulsoup-63801bbe200e">here</a> which we have adapted to collect the summary instead.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>game_name</th>
+      <th>console_name</th>
+      <th>rating_name</th>
+      <th>blurb_long</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>elden-ring</td>
+      <td>playstation-5</td>
+      <td>96</td>
+      <td>A New World Created By Hidetaka Miyazaki And G...</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>the-stanley-parable-ultra-deluxe</td>
+      <td>playstation-5</td>
+      <td>89</td>
+      <td>2013's The stanley parable is a classic. Full ...</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>horizon-forbidden-west</td>
+      <td>playstation-5</td>
+      <td>88</td>
+      <td>Join Aloy as she braves the Forbidden West – a...</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>gran-turismo-7</td>
+      <td>playstation-5</td>
+      <td>87</td>
+      <td>From classic vehicles and tracks to the reintr...</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>uncharted-legacy-of-thieves-collection</td>
+      <td>playstation-5</td>
+      <td>87</td>
+      <td>The game looks absolutely stellar on PS5, and ...</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Turning-text-into-something-useful">
+<a class="anchor" href="#Turning-text-into-something-useful" aria-hidden="true"><span class="octicon octicon-link"></span></a>Turning text into something useful<a class="anchor-link" href="#Turning-text-into-something-useful"> </a>
+</h2>
+<p>This provides us with a single column for the whole summary, which is great - but not really that useful for any future processes.</p>
+<p>We'll treat this text data with the following steps:</p>
+<ul>
+<li>Cleaning - we want to turn the data into lowercase to ensure each of the records are consistent. We don't want a situation where our code sees "classic" and "Classic" as two different words</li>
+<li>Tokenisation - this is a way of splitting long text-objects into distinct tokens. The simplest example is single word tokenisation, where we can take a sentence <code>'this is a game'</code> and split into a list of words <code>['this', 'is', 'a', 'game']</code>
+</li>
+<li>Lemmatisation - this process will ensure that tenses of words are meaningless, and words such as 'run', 'ran' and 'running' will all match to the same root word</li>
+<li>Vectorisation - once we've split the words into tokens, we can then transform the data into a matrix of token occurences. At this step we'll also strip out domain specific stop words (done via <code>max_df</code>) and words that are completely unique to few records (done via <code>min_df</code>)</li>
+</ul>
+<p>At the end of that process we have something like this:</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped="">
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>game_name</th>
+      <th>console_name</th>
+      <th>rating_name</th>
+      <th>blurb_long</th>
+      <th>3d</th>
+      <th>ability</th>
+      <th>about</th>
+      <th>across</th>
+      <th>action</th>
+      <th>adventure</th>
+      <th>...</th>
+      <th>who</th>
+      <th>will</th>
+      <th>wit</th>
+      <th>with</th>
+      <th>within</th>
+      <th>world</th>
+      <th>year</th>
+      <th>you</th>
+      <th>your</th>
+      <th>zone</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>elden-ring</td>
+      <td>playstation-5</td>
+      <td>96</td>
+      <td>A New World Created By Hidetaka Miyazaki And G...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>the-stanley-parable-ultra-deluxe</td>
+      <td>playstation-5</td>
+      <td>89</td>
+      <td>2013's The stanley parable is a classic. Full ...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>1</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>horizon-forbidden-west</td>
+      <td>playstation-5</td>
+      <td>88</td>
+      <td>Join Aloy as she braves the Forbidden West – a...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>gran-turismo-7</td>
+      <td>playstation-5</td>
+      <td>87</td>
+      <td>From classic vehicles and tracks to the reintr...</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>uncharted-legacy-of-thieves-collection</td>
+      <td>playstation-5</td>
+      <td>87</td>
+      <td>The game looks absolutely stellar on PS5, and ...</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>...</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+      <td>0</td>
+      <td>1</td>
+      <td>0</td>
+      <td>0</td>
+    </tr>
+  </tbody>
+</table>
+<p>5 rows × 329 columns</p>
+</div>
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Reducing-dimensionality">
+<a class="anchor" href="#Reducing-dimensionality" aria-hidden="true"><span class="octicon octicon-link"></span></a>Reducing dimensionality<a class="anchor-link" href="#Reducing-dimensionality"> </a>
+</h2>
+<p>We end up with a whopping 325 additional columns which all represent a binary value as to whether that token appears in the summary text.
+This is quite a lot of tokens, and truthfully some of them will still be pretty familiar and interchangeable - in order to reduce this further we can use a dimension reduction technique. There are many, we'll stick to a relatively simple Principal Components piece here - but may be worth investigating more graphical solutions (e.g. tSNE and uMAP).</p>
+<p>The idea behind this is to take those 325 columns and reduce them into, say, 2 components which can explain the majority of the variance between them. This is useful when starting to measure distance, where a simple Euclidean distance metric will suffer dramatically from the curse of dimensionality.</p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="But-okay,-what-should-I-actually-buy-next?">
+<a class="anchor" href="#But-okay,-what-should-I-actually-buy-next?" aria-hidden="true"><span class="octicon octicon-link"></span></a>But okay, what should I actually buy next?<a class="anchor-link" href="#But-okay,-what-should-I-actually-buy-next?"> </a>
+</h2>
+<p>So with this data we can now start making a stab at measuring how similar two games are to one another. Let's take an example. My favourite game this year is probably Elden Ring, but I've completed it now and whilst it's tempting to just start a new save, let's say I want to try something different - based on the summaries given on metacritic what would this simple method suggest?</p>
+<p>So we have these two principal components, and when we plot a few games you can visually see the distance between a set of games. Take below, we can see that Elden Ring is closer to Sifu than it is Gran Turismo 7. And this makes sense, Sifu is much closer in genre (and difficulty!) than GT7 and you can kind of reason similarities between the two.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_png output_subarea ">
+<img src="data:image/png;base64,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%0A">
+</div>
+
+</div>
+
+</div>
+</div>
+
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>We can even measure 'similarity' as just 1 over the euclidean distance between the two points. Therefore for Elden Ring we can ask for the most similar game we can find.</p>
+
+</div>
+</div>
+</div>
+    
+    
+<div class="cell border-box-sizing code_cell rendered">
+<div class="input">
+
+<div class="inner_cell">
+    <div class="input_area">
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">from</span> <span class="nn">scipy.spatial.distance</span> <span class="kn">import</span> <span class="n">euclidean</span><span class="p">,</span> <span class="n">pdist</span><span class="p">,</span> <span class="n">squareform</span>
+
+
+<span class="k">def</span> <span class="nf">similarity_func</span><span class="p">(</span><span class="n">u</span><span class="p">,</span> <span class="n">v</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">euclidean</span><span class="p">(</span><span class="n">u</span><span class="p">,</span><span class="n">v</span><span class="p">))</span>
+
+<span class="n">dists</span> <span class="o">=</span> <span class="n">pdist</span><span class="p">(</span><span class="n">critic_df</span><span class="p">[[</span><span class="s1">'pca_1'</span><span class="p">,</span> <span class="s1">'pca_2'</span><span class="p">]],</span> <span class="n">similarity_func</span><span class="p">)</span>
+<span class="n">sim_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">squareform</span><span class="p">(</span><span class="n">dists</span><span class="p">),</span> <span class="n">columns</span><span class="o">=</span><span class="n">critic_df</span><span class="p">[</span><span class="s1">'game_name'</span><span class="p">],</span> <span class="n">index</span><span class="o">=</span><span class="n">critic_df</span><span class="p">[</span><span class="s1">'game_name'</span><span class="p">])</span>
+
+<span class="n">sim_df</span><span class="p">[</span><span class="s1">'elden-ring'</span><span class="p">]</span>
+</pre></div>
+
+    </div>
+</div>
+</div>
+<details class="description">
+      <summary class="btn btn-sm" data-open="Hide Output" data-close="Show Output"></summary>
+        <p>
+</p>
+<div class="output_wrapper">
+<div class="output">
+
+<div class="output_area">
+
+
+
+<div class="output_text output_subarea output_execute_result">
+<pre>game_name
+elden-ring                                              0.000000
+the-stanley-parable-ultra-deluxe                        0.178060
+horizon-forbidden-west                                  0.414328
+gran-turismo-7                                          0.486106
+uncharted-legacy-of-thieves-collection                  0.394535
+destiny-2-the-witch-queen                               0.506614
+crusader-kings-iii-console-edition                      0.381153
+olliolli-world                                          0.176593
+lego-star-wars-the-skywalker-saga                       0.314269
+this-war-of-mine-final-cut                              0.184829
+grand-theft-auto-v                                      0.358598
+far-changing-tides                                      0.565858
+sifu                                                    0.620281
+sonic-origins                                           0.550740
+assetto-corsa-competizione                              0.421488
+road-96                                                 0.355987
+the-king-of-fighters-xv                                 0.295990
+souldiers                                               0.719638
+chernobylite                                            0.110320
+mlb-the-show-22                                         0.534619
+grid-legends                                            0.473051
+relayer                                                 0.678840
+sniper-elite-5                                          0.396560
+wwe-2k22                                                0.534873
+vampire-the-masquerade---bloodhunt                      0.562691
+the-ascent                                              0.708334
+motogp-22                                               0.544457
+salt-and-sacrifice                                      0.413128
+lost-judgment-the-kaito-files                           0.600030
+dying-light-2-stay-human                                0.155081
+tiny-tinas-wonderlands                                  0.517218
+eiyuden-chronicle-rising                                0.366368
+ghostwire-tokyo                                         0.492754
+cyberpunk-2077                                          0.677128
+monster-energy-supercross---the-official-videogame-5    0.637552
+tom-clancys-rainbow-six-extraction                      0.371601
+the-quarry                                              0.485407
+submerged-hidden-depths                                 0.503561
+evil-dead-the-game                                      0.211463
+stranger-of-paradise-final-fantasy-origin               0.800892
+martha-is-dead                                          0.519761
+anno-mutationem                                         0.376495
+a-memoir-blue                                           0.375061
+the-centennial-case-a-shijima-story                     0.260546
+assassins-creed-valhalla-dawn-of-ragnarok               0.521027
+Name: elden-ring, dtype: float64</pre>
+</div>
+
+</div>
+
+</div>
+</div>
+
+    </details>
+</div>
+    
+
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<p>So what game is next on my list? Well apparently this, but I'm really not sure...</p>
+<p><img src="/franalytics/images/copied_from_nb/metacritic/final-fantasy.png" alt=""></p>
+
+</div>
+</div>
+</div>
+<div class="cell border-box-sizing text_cell rendered">
+<div class="inner_cell">
+<div class="text_cell_render border-box-sizing rendered_html">
+<h2 id="Is-it-even-good?">
+<a class="anchor" href="#Is-it-even-good?" aria-hidden="true"><span class="octicon octicon-link"></span></a>Is it even good?<a class="anchor-link" href="#Is-it-even-good?"> </a>
+</h2>
+<p>Okay, so the end result was a bit disappointing - I'm glad it didn't give me WWE 2k22 but it's still underwhelming. Were we looking to improve this we've got a lot of different avenues we can explore:</p>
+<ul>
+<li>Mo' games - we're only looking at &lt;50 bestselling games on the PS5 from the current year, which is very limited in terms of sample of breadth.</li>
+<li>Mo' data - we're also only extracting the summary, we will definitely improve the process if we add additional features. On each game's homepage we have additional data like genre, rating, even developer - which would give us more belief in features used</li>
+<li>Better techniques - everything we've done here is pretty simple. There are many areas where we can improve and optimise - Named-entity Recognition may aid us in removing unhelpful nouns from the summary text; more diverse dimension reduction techniques could help us more accurately transpose the huge text data into more usable features; similarly NLP transformers could do this job for us in a more robust way, and could help with the lack of data.</li>
+</ul>
+<p>Overall I think this gives some indication of the potential of freely available data we could use. One fear I have before going too far down this route, is how well text-processing techniques can deal with "creative" text data - I can see how a model can easily learn a relationship between more structured and consistent text (e.g. categorical labels, commerce receipts, chatbot data) where the text is chosen to be as clear and concise as possible. With reviews and summaries, critics will be encouraged to write creatively - to appeal to a human rather than be understood by a machine, and this could be where models find it increasingly difficult to pick out context (well, maybe AI will be fine? PLEASE? I HOPE?).</p>
+
+</div>
+</div>
+</div>
+</div>
+
+
+
+  </div><!-- from https://github.com/utterance/utterances -->
+<script src="https://utteranc.es/client.js"
+        repo="ffmmbb/franalytics"
+        issue-term="title"
+        label="blogpost-comment"
+        theme="github-light"
+        crossorigin="anonymous"
+        async>
+</script><a class="u-url" href="/franalytics/text-extraction/code/2022/06/26/games-and-reviews.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/franalytics/"></data>
+
+  <div class="wrapper">
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col">
+        <p class="feed-subscribe">
+          <a href="/franalytics/feed.xml">
+            <svg class="svg-icon orange">
+              <use xlink:href="/franalytics/assets/minima-social-icons.svg#rss"></use>
+            </svg><span>Subscribe</span>
+          </a>
+        </p>
+      </div>
+      <div class="footer-col">
+        <p>This site is built with fastpages, An easy to use blogging platform with extra features for Jupyter Notebooks.</p>
+      </div>
+    </div>
+
+    <div class="social-links"><ul class="social-media-list"><li><a rel="me" href="https://github.com/ffmmbbb" target="_blank" title="ffmmbbb"><svg class="svg-icon grey"><use xlink:href="/franalytics/assets/minima-social-icons.svg#github"></use></svg></a></li><li><a rel="me" href="https://www.linkedin.com/in/francis-barrett-66718b7a" target="_blank" title="francis-barrett-66718b7a"><svg class="svg-icon grey"><use xlink:href="/franalytics/assets/minima-social-icons.svg#linkedin"></use></svg></a></li><li><a rel="me" href="https://twitter.com/_francisbarrett" target="_blank" title="_francisbarrett"><svg class="svg-icon grey"><use xlink:href="/franalytics/assets/minima-social-icons.svg#twitter"></use></svg></a></li></ul>
+</div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
